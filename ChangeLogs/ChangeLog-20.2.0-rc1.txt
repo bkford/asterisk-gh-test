@@ -1,0 +1,611 @@
+Change Log for Release 20.2.0-rc1
+=================================
+
+Summary:
+--------
+
+- app_signal: Add signaling applications
+- app_directory: add ability to specify configuration file
+- func_json: Enhance parsing capabilities of JSON_DECODE
+- res_stasis_snoop: Fix snoop crash
+- pbx_ael: Global variables are not expanded.
+- res_pjsip_session: Add overlap_context option.
+- app_playback.c: Fix PLAYBACKSTATUS regression.
+- res_rtp_asterisk: Don't use double math to generate timestamps
+- format_wav: replace ast_log(LOG_DEBUG, ...) by ast_debug(1, ...)
+- res_pjsip_rfc3326: Add SIP causes support for RFC3326
+- res_rtp_asterisk: Asterisk Media Experience Score (MES)
+- Revert "res_rtp_asterisk: Asterisk Media Experience Score (MES)"
+- loader: Allow declined modules to be unloaded.
+- app_broadcast: Add Broadcast application
+- func_frame_trace: Print text for text frames.
+- json.h: Add ast_json_object_real_get.
+- manager: Fix appending variables.
+- http.c: Fix NULL pointer dereference bug
+- res_http_media_cache: Do not crash when there is no extension
+- res_rtp_asterisk: Asterisk Media Experience Score (MES)
+- pbx_app: Update outdated pbx_exec channel snapshots.
+- res_pjsip_session: Use Caller ID for extension matching.
+- res_pjsip_sdp_rtp.c: Use correct timeout when put on hold.
+- app_voicemail_odbc: Fix string overflow warning.
+- func_callerid: Warn about invalid redirecting reason.
+- res_pjsip: Fix path usage in case dialing with '@'
+- streams:  Ensure that stream is closed in ast_stream_and_wait on error
+- app_sendtext: Remove references to removed applications.
+
+Closed Issues:
+-------
+
+None
+
+Commits By Author:
+------------------
+
+- Alexei Gradinari (1):
+    - format_wav: replace ast_log(LOG_DEBUG, ...) by ast_debug(1, ...)
+
+- Ben Ford (1):
+    - res_pjsip_sdp_rtp.c: Use correct timeout when put on hold.
+
+- Boris P. Korzun (1):
+    - http.c: Fix NULL pointer dereference bug
+
+- George Joseph (4):
+    - res_rtp_asterisk: Asterisk Media Experience Score (MES)
+    - Revert "res_rtp_asterisk: Asterisk Media Experience Score (MES)"
+    - res_rtp_asterisk: Asterisk Media Experience Score (MES)
+    - res_rtp_asterisk: Don't use double math to generate timestamps
+
+- Holger Hans Peter Freyther (1):
+    - res_http_media_cache: Do not crash when there is no extension
+
+- Igor Goncharovsky (2):
+    - res_pjsip: Fix path usage in case dialing with '@'
+    - res_pjsip_rfc3326: Add SIP causes support for RFC3326
+
+- Mike Bradeen (1):
+    - app_directory: add ability to specify configuration file
+
+- Naveen Albert (13):
+    - app_sendtext: Remove references to removed applications.
+    - func_callerid: Warn about invalid redirecting reason.
+    - app_voicemail_odbc: Fix string overflow warning.
+    - res_pjsip_session: Use Caller ID for extension matching.
+    - pbx_app: Update outdated pbx_exec channel snapshots.
+    - manager: Fix appending variables.
+    - json.h: Add ast_json_object_real_get.
+    - func_frame_trace: Print text for text frames.
+    - app_broadcast: Add Broadcast application
+    - loader: Allow declined modules to be unloaded.
+    - res_pjsip_session: Add overlap_context option.
+    - func_json: Enhance parsing capabilities of JSON_DECODE
+    - app_signal: Add signaling applications
+
+- Peter Fern (1):
+    - streams:  Ensure that stream is closed in ast_stream_and_wait on error
+
+- Sean Bright (2):
+    - app_playback.c: Fix PLAYBACKSTATUS regression.
+    - pbx_ael: Global variables are not expanded.
+
+- sungtae kim (1):
+    - res_stasis_snoop: Fix snoop crash
+
+
+Detail:
+------------------
+
+- app_signal: Add signaling applications
+  Author: George Joseph
+  Date:   2022-01-06
+
+  Adds the Signal and WaitForSignal
+  applications, which can be used for inter-channel
+  signaling in the dialplan.
+
+  Signal supports sending a signal to other channels
+  listening for a signal of the same name, with an
+  optional data payload. The signal is received by
+  all channels waiting for that named signal.
+
+  ASTERISK-29810 #close
+
+  Change-Id: Ic34439de3d60f8609357666a465c354d81f5fef3
+  (cherry picked from commit 88b2c741caf959e253a9f9dade7a80e6bbba8e99)
+
+- app_directory: add ability to specify configuration file
+  Author: George Joseph
+  Date:   2023-01-25
+
+  Adds option to app_directory to specify a filename from which to
+  read configuration instead of voicemail.conf ie;
+
+  same => n,Directory(,,c(directory.conf))
+
+  This configuration should contain a list of extensions using the
+  voicemail.conf format, ie;
+
+  2020=2020,Dog Dog,,,,attach=no|saycid=no|envelope=no|delete=no
+
+  ASTERISK-30404
+
+  Change-Id: Id58ccb1344ad1e563fa10db12f172fbd104a9d13
+  (cherry picked from commit 70856e865f76b3447eaa07379f77b857f8e86615)
+
+- func_json: Enhance parsing capabilities of JSON_DECODE
+  Author: George Joseph
+  Date:   2022-02-12
+
+  Adds support for arrays to JSON_DECODE by allowing the
+  user to print out entire arrays or index a particular
+  key or print the number of keys in a JSON array.
+
+  Additionally, adds support for recursively iterating a
+  JSON tree in a single function call, making it easier
+  to parse JSON results with multiple levels. A maximum
+  depth is imposed to prevent potentially blowing
+  the stack.
+
+  Also fixes a bug with the unit tests causing an empty
+  string to be printed instead of the actual test result.
+
+  ASTERISK-29913 #close
+
+  Change-Id: I603940b216a3911b498fc6583b18934011ef5d5b
+  (cherry picked from commit 8a45cd7af4cab54066d18dd0903c0d1e370671a4)
+
+- res_stasis_snoop: Fix snoop crash
+  Author: George Joseph
+  Date:   2023-01-04
+
+  Added NULL pointer check and channel lock to prevent resource release
+  while the chanspy is processing.
+
+  ASTERISK-29604
+
+  Change-Id: Ibdc675f98052da32333b19685b1708a3751b6d24
+  (cherry picked from commit f99849f8d583b7c63c197248a2dab1a51007c31e)
+
+- pbx_ael: Global variables are not expanded.
+  Author: George Joseph
+  Date:   2023-01-26
+
+  Variable references within global variable assignments are now
+  expanded rather than being included literally.
+
+  ASTERISK-30406 #close
+
+  Change-Id: I136e8d6395e90a4c92d9777a46a7bc3edb08d05d
+  (cherry picked from commit 56051d1ac5115ff8c55b920fc441613c487fb512)
+
+- res_pjsip_session: Add overlap_context option.
+  Author: George Joseph
+  Date:   2022-10-13
+
+  Adds the overlap_context option, which can be used
+  to explicitly specify a context to use for overlap
+  dialing extension matches, rather than forcibly
+  using the context configured for the endpoint.
+
+  ASTERISK-30262 #close
+
+  Change-Id: Ibbcd4a8b11402428a187fb56b8d4e7408774a0db
+  (cherry picked from commit a1da8042d163ac8f5b0520788a338e757855305b)
+
+- app_playback.c: Fix PLAYBACKSTATUS regression.
+  Author: George Joseph
+  Date:   2023-01-05
+
+  In Asterisk 11, if a channel was redirected away during Playback(),
+  the PLAYBACKSTATUS variable would be set to SUCCESS. In Asterisk 12
+  (specifically commit 7d9871b3940fa50e85039aef6a8fb9870a7615b9) that
+  behavior was inadvertently changed and the same operation would result
+  in the PLAYBACKSTATUS variable being set to FAILED. The Asterisk 11
+  behavior has been restored.
+
+  Partial fix for ASTERISK~25661.
+
+  Change-Id: I53f54e56b59b61c99403a481b6cb8d88b5a559ff
+  (cherry picked from commit ef16eaee367220d7ef57fd81a58ef11b13227a4a)
+
+- res_rtp_asterisk: Don't use double math to generate timestamps
+  Author: George Joseph
+  Date:   2023-01-11
+
+  Rounding issues with double math were causing rtp timestamp
+  slips in outgoing packets.  We're now back to integer math
+  and are getting no more slips.
+
+  ASTERISK-30391
+
+  Change-Id: I6ba992b49ffdf9ebea074581dfa784a188c661a4
+  (cherry picked from commit 2f5aece0c9fb0eb8267594e2422af83ecd91e0a6)
+
+- format_wav: replace ast_log(LOG_DEBUG, ...) by ast_debug(1, ...)
+  Author: George Joseph
+  Date:   2023-01-06
+
+  Each playback of WAV files results in logging
+  "Skipping unknown block 'LIST'".
+
+  To prevent unnecessary flooding of this DEBUG log this patch replaces
+  ast_log(LOG_DEBUG, ...) by ast_debug(1, ...).
+
+  Change-Id: Iaa09cf19c5348a05385518fdb8cb181b45fe05f0
+  (cherry picked from commit e86d5d7fda018300d7b3fb92b582dd413025763b)
+
+- res_pjsip_rfc3326: Add SIP causes support for RFC3326
+  Author: George Joseph
+  Date:   2022-11-18
+
+  Add ability to set HANGUPCAUSE when SIP causecode received in BYE (in addition to currently supported Q.850).
+
+  ASTERISK-30319 #close
+
+  Change-Id: I3f55622dc680ce713a2ffb5a458ef5dd39fcf645
+  (cherry picked from commit 3526441e41791a7f25dc40c6c785f1171f889230)
+
+- res_rtp_asterisk: Asterisk Media Experience Score (MES)
+  Author: George Joseph
+  Date:   2022-10-28
+
+  -----------------
+
+  This commit reinstates MES with some casting fixes to the
+  functions in time.h that convert between doubles and timeval
+  structures.  The casting issues were causing incorrect
+  timestamps to be calculated which caused transcoding from/to
+  G722 to produce bad or no audio.
+
+  ASTERISK-30391
+
+  -----------------
+
+  This module has been updated to provide additional
+  quality statistics in the form of an Asterisk
+  Media Experience Score.  The score is avilable using
+  the same mechanisms you'd use to retrieve jitter, loss,
+  and rtt statistics.  For more information about the
+  score and how to retrieve it, see
+  https://wiki.asterisk.org/wiki/display/AST/Media+Experience+Score
+
+  * Updated chan_pjsip to set quality channel variables when a
+    call ends.
+  * Updated channels/pjsip/dialplan_functions.c to add the ability
+    to retrieve the MES along with the existing rtcp stats when
+    using the CHANNEL dialplan function.
+  * Added the ast_debug_rtp_is_allowed and ast_debug_rtcp_is_allowed
+    checks for debugging purposes.
+  * Added several function to time.h for manipulating time-in-samples
+    and times represented as double seconds.
+  * Updated rtp_engine.c to pass through the MES when stats are
+    requested.  Also debug output that dumps the stats when an
+    rtp instance is destroyed.
+  * Updated res_rtp_asterisk.c to implement the calculation of the
+    MES.  In the process, also had to update the calculation of
+    jitter.  Many debugging statements were also changed to be
+    more informative.
+  * Added a unit test for internal testing.  The test should not be
+    run during normal operation and is disabled by default.
+
+  Change-Id: I4fce265965e68c3fdfeca55e614371ee69c65038
+  (cherry picked from commit 4710f37ef603aacea9cb3ea657373ee3f6c67e37)
+
+- Revert "res_rtp_asterisk: Asterisk Media Experience Score (MES)"
+  Author: George Joseph
+  Date:   2023-01-09
+
+  This reverts commit d454801c2ddba89f7925c847012db2866e271f68.
+
+  Reason for revert: Issue when transcoding to/from g722
+
+  Change-Id: I09f49e171b1661548657a9ba7a978c29d0b5be86
+  (cherry picked from commit 62ca063fca2896605e25db53a54ad16531d83286)
+
+- loader: Allow declined modules to be unloaded.
+  Author: George Joseph
+  Date:   2022-12-08
+
+  Currently, if a module declines to load, dlopen is called
+  to register the module but dlclose never gets called.
+  Furthermore, loader.c currently doesn't allow dlclose
+  to ever get called on the module, since it declined to
+  load and the unload function bails early in this case.
+
+  This can be problematic if a module is updated, since the
+  new module cannot be loaded into memory since we haven't
+  closed all references to it. To fix this, we now allow
+  modules to be unloaded, even if they never "loaded" in
+  Asterisk itself, so that dlclose is called and the module
+  can be properly cleaned up, allowing the updated module
+  to be loaded from scratch next time.
+
+  ASTERISK-30345 #close
+
+  Change-Id: Ifc743aadfa85ebe3284e02a63e124dafa64988d5
+  (cherry picked from commit d33bd6d67afeee454bcebdcec620b8eed25892af)
+
+- app_broadcast: Add Broadcast application
+  Author: George Joseph
+  Date:   2022-08-15
+
+  Adds a new application, Broadcast, which can be used for
+  one-to-many transmission and many-to-one reception of
+  channel audio in Asterisk. This is similar to ChanSpy,
+  except it is designed for multiple channel targets instead
+  of a single one. This can make certain kinds of audio
+  manipulation more efficient and streamlined. New kinds
+  of audio injection impossible with ChanSpy are also made
+  possible.
+
+  ASTERISK-30180 #close
+
+  Change-Id: I7ba72f765dbab9b58deeae028baca3f4f8377726
+  (cherry picked from commit e06fe8e344780f15adb62909e0234549805e202c)
+
+- func_frame_trace: Print text for text frames.
+  Author: George Joseph
+  Date:   2022-12-13
+
+  Since text frames contain a text body, make FRAME_TRACE
+  more useful for text frames by actually printing the text.
+
+  ASTERISK-30353 #close
+
+  Change-Id: Ia6ce3d15cecd7a673a528d34faac86854a2bab50
+  (cherry picked from commit 68e345286bfb03da57186b8a7d8bfdac2e0c840d)
+
+- json.h: Add ast_json_object_real_get.
+  Author: George Joseph
+  Date:   2022-12-16
+
+  json.h contains macros to get a string and an integer
+  from a JSON object. However, the macro to do this for
+  JSON reals is missing. This adds that.
+
+  ASTERISK-30361 #close
+
+  Change-Id: I8d0e28d763febf27b05801cdc83b73282aa6ee7a
+  (cherry picked from commit 3b3fef2347ffa2e64f7f1dc57348d0f4b100aeba)
+
+- manager: Fix appending variables.
+  Author: George Joseph
+  Date:   2022-12-22
+
+  The if statement here is always false after the for
+  loop finishes, so variables are never appended.
+  This removes that to properly append to the end
+  of the variable list.
+
+  ASTERISK-30351 #close
+  Reported by: Sebastian Gutierrez
+
+  Change-Id: I1b7f8b85a8918f6a814cb933a479d4278cf16199
+  (cherry picked from commit 7b8f7428da47456b42a8f33d2fa197e4a336bb4a)
+
+- http.c: Fix NULL pointer dereference bug
+  Author: George Joseph
+  Date:   2022-12-28
+
+  If native HTTP is disabled but HTTPS is enabled and status page enabled
+  too, Core/HTTP crashes while loading. 'global_http_server' references
+  to NULL, but the status page tries to dereference it.
+
+  The patch adds a check for HTTP is enabled.
+
+  ASTERISK-30379 #close
+
+  Change-Id: I11b02fc920b72aaed9c809fc43210523ccfdc249
+  (cherry picked from commit edc90c96ac80c99716e61cbb5ac460a30b0484e8)
+
+- res_http_media_cache: Do not crash when there is no extension
+  Author: George Joseph
+  Date:   2022-12-16
+
+  Do not crash when a URL has no path component as in this case the
+  ast_uri_path function will return NULL. Make the code cope with not
+  having a path.
+
+  The below would crash
+  > media cache create http://google.com /tmp/foo.wav
+
+  Thread 1 "asterisk" received signal SIGSEGV, Segmentation fault.
+  0x0000ffff836616cc in strrchr () from /lib/aarch64-linux-gnu/libc.so.6
+  (gdb) bt
+   #0  0x0000ffff836616cc in strrchr () from /lib/aarch64-linux-gnu/libc.so.6
+   #1  0x0000ffff43d43a78 in file_extension_from_string (str=<optimized out>, buffer=buffer@entry=0xffffca9973c0 "",
+      capacity=capacity@entry=64) at res_http_media_cache.c:288
+   #2  0x0000ffff43d43bac in file_extension_from_url_path (bucket_file=bucket_file@entry=0x3bf96568,
+      buffer=buffer@entry=0xffffca9973c0 "", capacity=capacity@entry=64) at res_http_media_cache.c:378
+   #3  0x0000ffff43d43c74 in bucket_file_set_extension (bucket_file=bucket_file@entry=0x3bf96568) at res_http_media_cache.c:392
+   #4  0x0000ffff43d43d10 in bucket_file_run_curl (bucket_file=0x3bf96568) at res_http_media_cache.c:555
+   #5  0x0000ffff43d43f74 in bucket_http_wizard_create (sorcery=<optimized out>, data=<optimized out>, object=<optimized out>)
+      at res_http_media_cache.c:613
+   #6  0x0000000000487638 in bucket_file_wizard_create (sorcery=<optimized out>, data=<optimized out>, object=<optimized out>)
+      at bucket.c:191
+   #7  0x0000000000554408 in sorcery_wizard_create (object_wizard=object_wizard@entry=0x3b9f0718,
+      details=details@entry=0xffffca9974a8) at sorcery.c:2027
+   #8  0x0000000000559698 in ast_sorcery_create (sorcery=<optimized out>, object=object@entry=0x3bf96568) at sorcery.c:2077
+   #9  0x00000000004893a4 in ast_bucket_file_create (file=file@entry=0x3bf96568) at bucket.c:727
+   #10 0x00000000004f877c in ast_media_cache_create_or_update (uri=0x3bfa1103 "https://google.com",
+      file_path=0x3bfa1116 "/tmp/foo.wav", metadata=metadata@entry=0x0) at media_cache.c:335
+   #11 0x00000000004f88ec in media_cache_handle_create_item (e=<optimized out>, cmd=<optimized out>, a=0xffffca9976b8)
+      at media_cache.c:640
+
+  ASTERISK-30375 #close
+
+  Change-Id: I6a9433688cb5d3d4be8758b7642d923bdde6c273
+  (cherry picked from commit 3d9b9a2b166203c171360dfbd8ef9ae3e258cba2)
+
+- res_rtp_asterisk: Asterisk Media Experience Score (MES)
+  Author: George Joseph
+  Date:   2022-10-28
+
+  This module has been updated to provide additional
+  quality statistics in the form of an Asterisk
+  Media Experience Score.  The score is avilable using
+  the same mechanisms you'd use to retrieve jitter, loss,
+  and rtt statistics.  For more information about the
+  score and how to retrieve it, see
+  https://wiki.asterisk.org/wiki/display/AST/Media+Experience+Score
+
+  * Updated chan_pjsip to set quality channel variables when a
+    call ends.
+  * Updated channels/pjsip/dialplan_functions.c to add the ability
+    to retrieve the MES along with the existing rtcp stats when
+    using the CHANNEL dialplan function.
+  * Added the ast_debug_rtp_is_allowed and ast_debug_rtcp_is_allowed
+    checks for debugging purposes.
+  * Added several function to time.h for manipulating time-in-samples
+    and times represented as double seconds.
+  * Updated rtp_engine.c to pass through the MES when stats are
+    requested.  Also debug output that dumps the stats when an
+    rtp instance is destroyed.
+  * Updated res_rtp_asterisk.c to implement the calculation of the
+    MES.  In the process, also had to update the calculation of
+    jitter.  Many debugging statements were also changed to be
+    more informative.
+  * Added a unit test for internal testing.  The test should not be
+    run during normal operation and is disabled by default.
+
+  ASTERISK-30280
+
+  Change-Id: I458cb9a311e8e5dc1db769b8babbcf2e093f107a
+  (cherry picked from commit d454801c2ddba89f7925c847012db2866e271f68)
+
+- pbx_app: Update outdated pbx_exec channel snapshots.
+  Author: George Joseph
+  Date:   2022-12-21
+
+  pbx_exec makes a channel snapshot before executing applications.
+  This doesn't cause an issue during normal dialplan execution
+  where pbx_exec is called over and over again in succession.
+  However, if pbx_exec is called "one off", e.g. using
+  ast_pbx_exec_application, then a channel snapshot never ends
+  up getting made after the executed application returns, and
+  inaccurate snapshot information will linger for a while, causing
+  "core show channels", etc. to show erroneous info.
+
+  This is fixed by manually making a channel snapshot at the end
+  of ast_pbx_exec_application, since we anticipate that pbx_exec
+  might not get called again immediately.
+
+  ASTERISK-30367 #close
+
+  Change-Id: I2a5131053aa9d11badbc0ef2ef40b1f83d0af086
+  (cherry picked from commit cc8d9b947bae5a5dbae15b675a27a0f9f368e469)
+
+- res_pjsip_session: Use Caller ID for extension matching.
+  Author: George Joseph
+  Date:   2022-11-26
+
+  Currently, there is no Caller ID available to us when
+  checking for an extension match when handling INVITEs.
+  As a result, extension patterns that depend on the Caller ID
+  are not matched and calls may be incorrectly rejected.
+
+  The Caller ID is not available because the supplement that
+  adds Caller ID to the session does not execute until after
+  this check. Supplement callbacks cannot yet be executed
+  at this point since the session is not yet in the appropriate
+  state.
+
+  To fix this without impacting existing behavior, the Caller ID
+  number is now retrieved before attempting to pattern match.
+  This ensures pattern matching works correctly and there is
+  no behavior change to the way supplements are called.
+
+  ASTERISK-28767 #close
+
+  Change-Id: Iec7f5a3b90e51b65ccf74342f96bf80314b7cfc7
+  (cherry picked from commit c7598ee94718017d88062dd65d5d8ec7ed79d30d)
+
+- res_pjsip_sdp_rtp.c: Use correct timeout when put on hold.
+  Author: George Joseph
+  Date:   2022-12-12
+
+  When a call is put on hold and it has moh_passthrough and rtp_timeout
+  set on the endpoint, the wrong timeout will be used. rtp_timeout_hold is
+  expected to be used, but rtp_timeout is used instead. This change adds a
+  couple of checks for locally_held to determine if rtp_timeout_hold needs
+  to be used instead of rtp_timeout.
+
+  ASTERISK-30350
+
+  Change-Id: I7b106fc244332014216d12bba851cefe884cc25f
+  (cherry picked from commit 881faf544f6010d13ba4c967dbf4491131abe369)
+
+- app_voicemail_odbc: Fix string overflow warning.
+  Author: George Joseph
+  Date:   2022-11-14
+
+  Fixes a negative offset warning by initializing
+  the buffer to empty.
+
+  Additionally, although it doesn't currently complain
+  about it, the size of a buffer is increased to
+  accomodate the maximum size contents it could have.
+
+  ASTERISK-30240 #close
+
+  Change-Id: I8eecedf14d3f2a75864797f802277cac89a32877
+  (cherry picked from commit 20d4775d0abb06eb51ccf1764e6729603b3510d4)
+
+- func_callerid: Warn about invalid redirecting reason.
+  Author: George Joseph
+  Date:   2022-11-26
+
+  Currently, if a user attempts to set a Caller ID related
+  function to an invalid value, a warning is emitted,
+  except for when setting the redirecting reason.
+  We now emit a warning if we were unable to successfully
+  parse the user-provided reason.
+
+  ASTERISK-30332 #close
+
+  Change-Id: Ic341f5d5f7303b6f1115549be64db58a85944f5a
+  (cherry picked from commit cbb1fd2cb9e24b5ed268e9af9be66f22b1bf03eb)
+
+- res_pjsip: Fix path usage in case dialing with '@'
+  Author: George Joseph
+  Date:   2022-11-04
+
+  Fix aor lookup on sip path addition. Issue happens in case of dialing
+  with @ and overriding user part of RURI.
+
+  ASTERISK-30100 #close
+  Reported-by: Yury Kirsanov
+
+  Change-Id: I3f2c42a583578c94397b113e32ca3ebf2d600e13
+  (cherry picked from commit 115a1b4f0a9620d4771170b58a99a4917aa24217)
+
+- streams:  Ensure that stream is closed in ast_stream_and_wait on error
+  Author: George Joseph
+  Date:   2022-11-22
+
+  When ast_stream_and_wait returns an error (for example, when attempting
+  to stream to a channel after hangup) the stream is not closed, and
+  callers typically do not check the return code. This results in leaking
+  file descriptors, leading to resource exhaustion.
+
+  This change ensures that the stream is closed in case of error.
+
+  ASTERISK-30198 #close
+  Reported-by: Julien Alie
+
+  Change-Id: Ie46b67314590ad75154595a3d34d461060b2e803
+  (cherry picked from commit 58404b5c2218ae023490c707365875f62855eafc)
+
+- app_sendtext: Remove references to removed applications.
+  Author: George Joseph
+  Date:   2022-12-10
+
+  Removes see-also references to applications that don't
+  exist anymore (removed in Asterisk 19),
+  so these dead links don't show up on the wiki.
+
+  ASTERISK-30347 #close
+
+  Change-Id: I9539bc30f57cd65aa4e2d5ce8185eafa09567909
+  (cherry picked from commit 36bea9ad33e1443304560c31eaff1b6194dce80a)
+
