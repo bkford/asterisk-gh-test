@@ -1,0 +1,29 @@
+Change Log for Release 20.2.0-rc2
+=================================
+
+Summary:
+--------
+
+- doxygen: Fix doxygen errors.
+
+Closed Issues:
+-------
+
+None
+
+Commits By Author:
+------------------
+
+- Sean Bright (1):
+    - doxygen: Fix doxygen errors.
+
+
+Detail:
+------------------
+
+- doxygen: Fix doxygen errors.
+  Author: George Joseph
+  Date:   2023-01-30
+
+  Change-Id: Ic50e95b4fc10f74ab15416d908e8a87ee8ec2f85
+
