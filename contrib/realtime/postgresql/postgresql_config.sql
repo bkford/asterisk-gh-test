@@ -272,7 +272,7 @@ CREATE TABLE musiconhold (
     PRIMARY KEY (name)
 );
 
-INSERT INTO alembic_version (version_num) VALUES ('4da0c5f79a9c');
+INSERT INTO alembic_version (version_num) VALUES ('4da0c5f79a9c') RETURNING alembic_version.version_num;
 
 -- Running upgrade 4da0c5f79a9c -> 43956d550a44
 
@@ -1519,6 +1519,12 @@ UPDATE alembic_version SET version_num='ccf795ee535f' WHERE alembic_version.vers
 ALTER TABLE ps_endpoints ADD COLUMN send_aoc ast_bool_values;
 
 UPDATE alembic_version SET version_num='5a2247c957d2' WHERE alembic_version.version_num = 'ccf795ee535f';
+
+-- Running upgrade 5a2247c957d2 -> f261363a857f
+
+ALTER TABLE ps_endpoints ADD COLUMN overlap_context VARCHAR(80);
+
+UPDATE alembic_version SET version_num='f261363a857f' WHERE alembic_version.version_num = '5a2247c957d2';
 
 COMMIT;
 
