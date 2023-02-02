@@ -1,0 +1,38 @@
+Change Log for Release 20.3.0-rc1
+=================================
+
+Summary:
+--------
+
+- Alembic SQL scripts for 20.3.0-rc1
+- build: mess with testfile.txt
+
+Closed Issues:
+-------
+
+None
+
+Commits By Author:
+------------------
+
+- Asterisk Development Team (1):
+    - Alembic SQL scripts for 20.3.0-rc1
+
+- George Joseph (1):
+    - build: mess with testfile.txt
+
+
+Detail:
+------------------
+
+- Alembic SQL scripts for 20.3.0-rc1
+  Author: Asterisk Development Team
+  Date:   2023-02-02
+
+
+- build: mess with testfile.txt
+  Author: George Joseph
+  Date:   2023-02-02
+
+  (cherry picked from commit e183837f38e2b6667ec473c1a9cbebc496e3b63e)
+
