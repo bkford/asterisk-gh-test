@@ -4,6 +4,10 @@ on:
   pull_request_target:
     types: [ labeled ]
 
+concurrency:
+  group: ${{github.workflow}}-${{github.event.number}}
+  cancel-in-progress: true
+
 env:
   ASTERISK_REPO:     ${{ github.repository }}
   PR_NUMBER:         ${{ github.event.number }}
