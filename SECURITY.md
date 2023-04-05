@@ -2,20 +2,8 @@
 
 ## Supported Versions
 
-Use this section to tell people about which versions of your project are
-currently being supported with security updates.
-
-| Version | Supported          |
-| ------- | ------------------ |
-| 5.1.x   | :white_check_mark: |
-| 5.0.x   | :x:                |
-| 4.0.x   | :white_check_mark: |
-| < 4.0   | :x:                |
+The Asterisk project maintains a [wiki page](https://wiki.asterisk.org/wiki/display/AST/Asterisk+Versions) of releases. Each version is listed with its release date, security fix only date, and end of life date. Consult this wiki page to see if the version of Asterisk you are reporting a security vulnerability against is still supported.
 
 ## Reporting a Vulnerability
 
-Use this section to tell people how to report a vulnerability.
-
-Tell them where to go, how often they can expect to get an update on a
-reported vulnerability, what to expect if the vulnerability is accepted or
-declined, etc.
+To report a vulnerability use the "Report a vulnerability" button under the "Security" tab of this project.
