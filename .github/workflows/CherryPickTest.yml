@@ -56,7 +56,6 @@ jobs:
           github_token:      ${{secrets.GITHUB_TOKEN}}
           unittest_command:  ${{vars.UNITTEST_COMMAND}}
 
-
   AsteriskUnitTests:
     if: ${{ always() }}
     runs-on: ubuntu-latest
