@@ -47,7 +47,6 @@ jobs:
       - name: Run Unit Tests
         uses: asterisk/asterisk-ci-actions/AsteriskUnitComposite@main
         with:
-          test_type:         Gate
           asterisk_repo:     ${{env.ASTERISK_REPO}}
           pr_number:         ${{env.PR_NUMBER}}
           base_branch:       ${{matrix.branch}}
