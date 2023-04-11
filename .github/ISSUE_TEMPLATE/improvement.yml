@@ -1,7 +1,7 @@
-name: New Feature
-description: Request a New Feature
-title: "[Feature]: "
-labels: ["feature", "triage"]
+name: Improvement
+description: Request an improvement to existing functionality
+title: "[Improvement]: "
+labels: ["improvement", "triage"]
 body:
   - type: markdown
     attributes:
@@ -20,5 +20,5 @@ body:
   - type: textarea
     id: description
     attributes:
-      label: Feature Description
-      description: Describe the new feature requested in as much detail as possible
+      label: Improvement Description
+      description: Describe the improvement requested in as much detail as possible
