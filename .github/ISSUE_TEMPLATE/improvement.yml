@@ -1,7 +1,7 @@
 name: Improvement
 description: Request an improvement to existing functionality
 title: "[Improvement]: "
-labels: ["improvement", "triage"]
+labels: ["Improvement", "triage"]
 body:
   - type: markdown
     attributes:
