@@ -31,9 +31,11 @@ jobs:
         uses: asterisk/asterisk-ci-actions/GetCherryPickBranchesFromPR@main
         id: getbranches
         with:
-          asterisk_repo: ${{env.ASTERISK_REPO}}
-          pr_number:     ${{env.PR_NUMBER}}
-          github_token:  ${{env.GITHUB_TOKEN}}
+          repo:                    ${{env.ASTERISK_REPO}}
+          pr_number:               ${{env.PR_NUMBER}}
+          cherry_pick_test_label:  ${{vars.CHERRY_PICK_TEST_LABEL}}
+          cherry_pick_regex:       ${{vars.CHERRY_PICK_REGEX}}
+          github_token:            ${{env.GITHUB_TOKEN}}
 
   AsteriskUnitTestMatrix:
     needs: [ IdentifyBranches ]
