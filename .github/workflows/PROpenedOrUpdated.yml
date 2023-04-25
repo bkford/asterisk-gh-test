@@ -5,9 +5,9 @@ on:
   pull_request_target:
     types: [opened, reopened, synchronize]
 
-concurrency:
-  group: ${{github.workflow}}-${{github.event.number}}
-  cancel-in-progress: true
+#concurrency:
+#  group: ${{github.workflow}}-${{github.event.number}}
+#  cancel-in-progress: true
 
 env:
   ASTERISK_REPO:     ${{github.repository}}
@@ -76,7 +76,7 @@ jobs:
 
   AsteriskGateTests:
     name: AsteriskGateTests
-    if: ${{ always() }}
+    if: always()
     runs-on: ubuntu-latest
     needs: AsteriskGate
     steps:
