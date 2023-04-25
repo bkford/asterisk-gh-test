@@ -22,6 +22,8 @@ jobs:
       - uses: wow-actions/auto-close-fixed-issues@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   IdentifyBranches:
     if: github.event.pull_request.merged == true
@@ -31,9 +33,10 @@ jobs:
         uses: asterisk/asterisk-ci-actions/GetCherryPickBranchesFromPR@main
         id: getbranches
         with:
-          repo:         ${{env.REPO}}
-          pr_number:    ${{env.PR_NUMBER}}
-          github_token: ${{env.GITHUB_TOKEN}}
+          repo:              ${{env.REPO}}
+          pr_number:         ${{env.PR_NUMBER}}
+          cherry_pick_regex: ${{vars.CHERRY_PICK_REGEX}}
+          github_token:      ${{env.GITHUB_TOKEN}}
 
   MergeCherryPicks:
     needs: [ IdentifyBranches ]
