@@ -80,7 +80,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: AsteriskGate
     steps:
-        run: |
+      - run: |
           exit 1
 
   AsteriskGateTestsPassed:
@@ -89,16 +89,16 @@ jobs:
     runs-on: ubuntu-latest
     needs: AsteriskGate
     steps:
-        run: |
+      - run: |
           exit 0
 
   AsteriskGateTestsCancelled:
     name: AsteriskGateTests
-    if: cacnelled()
+    if: cancelled()
     runs-on: ubuntu-latest
     needs: AsteriskGate
     steps:
-        run: |
+      - run: |
           exit 1
 
 #  AsteriskGateTests:
