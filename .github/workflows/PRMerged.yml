@@ -10,12 +10,9 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  ASTERISK_REPO:     ${{github.repository}}
+  REPO:              ${{github.repository}}
   PR_NUMBER:         ${{github.event.number}}
-  PR_COMMIT:         ${{github.event.pull_request.head.sha}}
-  BRANCH:            ${{github.event.pull_request.base.ref}}
   GITHUB_TOKEN:      ${{secrets.GITHUB_TOKEN}}
-  MODULES_BLACKLIST: ${{ vars.GATETEST_MODULES_BLACKLIST }} ${{ vars.UNITTEST_MODULES_BLACKLIST }}
 
 jobs:
   CloseIssues:
@@ -34,7 +31,7 @@ jobs:
         uses: asterisk/asterisk-ci-actions/GetCherryPickBranchesFromPR@main
         id: getbranches
         with:
-          repo:         ${{env.ASTERISK_REPO}}
+          repo:         ${{env.REPO}}
           pr_number:    ${{env.PR_NUMBER}}
           github_token: ${{env.GITHUB_TOKEN}}
 
@@ -49,16 +46,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Cherry Pick PR ${{github.event.number}} to branch ${{matrix.branch}}
-        uses: asterisk/asterisk-ci-actions/GetRepo@main
+        uses: asterisk/asterisk-ci-actions/CherryPick@main
         with:
-          repo:              ${{env.ASTERISK_REPO}}
+          repo:              ${{env.REPO}}
           pr_number:         ${{env.PR_NUMBER}}
-          base_branch:       ${{matrix.branch}}
-          is_cherry_pick:    true
-          build_script:      buildAsterisk.sh
-          modules_blacklist: ${{env.MODULES_BLACKLIST}}
+          branch:            ${{matrix.branch}}
           github_token:      ${{env.GITHUB_TOKEN}}
 
-      - name: Push Cherry Pick PR ${{github.event.number}} to branch ${{matrix.branch}}
-        run: |
-          echo "Need to do the git push here"
