@@ -41,12 +41,12 @@ jobs:
     needs: [ IdentifyBranches ]
     continue-on-error: false
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
         branch: ${{ fromJSON(needs.IdentifyBranches.outputs.branches) }}
     runs-on: ubuntu-latest
     steps:
-      - name: Run Unit Tests
+      - name: Run Unit Tests for branch ${{matrix.branch}}
         uses: asterisk/asterisk-ci-actions/AsteriskUnitComposite@main
         with:
           asterisk_repo:     ${{env.ASTERISK_REPO}}
@@ -76,14 +76,14 @@ jobs:
               exit 1
               ;;
               *)
-              echo "::error::One or more tests failed"
+              echo "::error::One or more tests failed ($RESULT)"
               exit 1
           esac
 
   AsteriskGateTestMatrix:
     needs: [ IdentifyBranches, AsteriskUnitTests ]
     if: ${{ success() }}
-    continue-on-error: true
+    continue-on-error: false
     strategy:
       fail-fast: false
       matrix:
@@ -91,7 +91,7 @@ jobs:
         group: ${{ fromJSON(vars.GATETEST_LIST) }}
     runs-on: ubuntu-latest
     steps:
-      - name: Run Gate Tests for ${{ matrix.group }}
+      - name: Run Gate Tests for ${{ matrix.group }}-${{matrix.branch}}
         uses: asterisk/asterisk-ci-actions/AsteriskGateComposite@main
         with:
           test_type:         Gate

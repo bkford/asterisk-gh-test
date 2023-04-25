@@ -60,8 +60,6 @@ jobs:
       matrix:
         group: ${{ fromJSON(vars.GATETEST_LIST) }}
     runs-on: ubuntu-latest
-    outputs:
-      xresult: ${{steps.runtest.outputs.result}}
     steps:
       - id: runtest
         name: Run Gate Tests for ${{ matrix.group }}
@@ -88,7 +86,6 @@ jobs:
         env:
           RESULT: ${{ needs.AsteriskGate.result }}
         run: |
-          echo "all xresults: ${{ toJSON(needs.*.xresult) }}"
           echo "all results: ${{ toJSON(needs.*.result) }}"
           echo "composite result: ${{ needs.AsteriskGate.result }}"
 
@@ -102,6 +99,6 @@ jobs:
               exit 1
               ;;
               *)
-              echo "::error::One or more Testsuite tests failed"
+              echo "::error::One or more Testsuite tests failed ($RESULT)"
               exit 1
           esac
