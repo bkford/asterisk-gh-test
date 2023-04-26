@@ -16,6 +16,8 @@
  * at the top of the source tree.
  */
 
+/* :) */
+
 #include "asterisk.h"
 
 #include <pjsip.h>
