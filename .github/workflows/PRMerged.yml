@@ -35,6 +35,7 @@ jobs:
     outputs:
       branches:     ${{ steps.getbranches.outputs.branches }}
       branch_count: ${{ steps.getbranches.outputs.branch_count }}
+      github_token: ${{steps.get_workflow_token.outputs.token}}
     runs-on: ubuntu-latest
     steps:
       - name: Get cherry-pick branches
@@ -56,11 +57,13 @@ jobs:
         branch: ${{ fromJSON(needs.IdentifyBranches.outputs.branches) }}
     runs-on: ubuntu-latest
     steps:
+    
       - name: Cherry Pick PR ${{env.PR_NUMBER}} to branch ${{matrix.branch}}
         uses: asterisk/asterisk-ci-actions/CherryPick@main
         with:
           repo:              ${{env.REPO}}
           pr_number:         ${{env.PR_NUMBER}}
           branch:            ${{matrix.branch}}
-          github_token:      ${{env.GITHUB_TOKEN}}
-
+          github_token:      ${{secrets.ASTERISKTEAM_PAT}}
+          access_app_id:     ${{secrets.ASTERISK_ORG_ACCESS_APP_ID}}
+          access_app_key:    ${{secrets.ASTERISK_ORG_ACCESS_APP_PRIV_KEY}}
