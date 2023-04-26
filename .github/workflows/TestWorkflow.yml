@@ -2,6 +2,11 @@ name: Test Workflow
 run-name: "Test workflow started by ${{ github.actor }}"
 on:
   workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'PR number'
+        required: true
+        type: number
 
 jobs:
   TestJobs:
@@ -14,11 +19,15 @@ jobs:
     outputs:
       xresult: ${{steps.runtest.outputs.result}}
     steps:
+      - name: DumpEnvironment
+        uses: asterisk/asterisk-ci-actions/DumpEnvironmentAction@main
+    
       - name: Tester
         id: runtest
         env:
           GROUP: ${{matrix.group}}
         run: |
+          echo "${{ github.sha || inputs.pr_number }}"
           if [ "${GROUP}" == "pass_fail" ] ; then
             echo "Exiting with RC 1 (forced)"
             echo "result=failure" >> $GITHUB_OUTPUT
