@@ -1,17 +1,22 @@
 name: PRMerged
-run-name: "PR ${{github.event.number}} ${{github.event.action}} by ${{ github.actor }}"
+run-name: "PR ${{github.event.number || inputs.pr_number}} ${{github.event.action || 'MANUAL POST MERGE'}} by ${{ github.actor }}"
 on:
-#  workflow_dispatch:
   pull_request_target:
     types: [closed]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'PR number'
+        required: true
+        type: number
 
 concurrency:
-  group: ${{github.workflow}}-${{github.event.number}}
+  group: ${{github.workflow}}-${{github.event.number || inputs.pr_number}}
   cancel-in-progress: true
 
 env:
   REPO:              ${{github.repository}}
-  PR_NUMBER:         ${{github.event.number}}
+  PR_NUMBER:         ${{github.event.number || inputs.pr_number}}
   GITHUB_TOKEN:      ${{secrets.GITHUB_TOKEN}}
 
 jobs:
@@ -26,7 +31,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   IdentifyBranches:
-    if: github.event.pull_request.merged == true
+    if: github.event.pull_request.merged == true || inputs.pr_number
+    outputs:
+      branches:     ${{ steps.getbranches.outputs.branches }}
+      branch_count: ${{ steps.getbranches.outputs.branch_count }}
     runs-on: ubuntu-latest
     steps:
       - name: Get cherry-pick branches
@@ -48,7 +56,7 @@ jobs:
         branch: ${{ fromJSON(needs.IdentifyBranches.outputs.branches) }}
     runs-on: ubuntu-latest
     steps:
-      - name: Cherry Pick PR ${{github.event.number}} to branch ${{matrix.branch}}
+      - name: Cherry Pick PR ${{env.PR_NUMBER}} to branch ${{matrix.branch}}
         uses: asterisk/asterisk-ci-actions/CherryPick@main
         with:
           repo:              ${{env.REPO}}

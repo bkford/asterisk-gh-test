@@ -23,7 +23,8 @@ jobs:
     name: IdentifyBranches
     if: github.event.label.name == ${{vars.CHERRY_PICK_TEST_LABEL}}
     outputs:
-      branches: ${{ steps.getbranches.outputs.branches }}
+      branches:     ${{ steps.getbranches.outputs.branches }}
+      branch_count: ${{ steps.getbranches.outputs.branch_count }}
     runs-on: ubuntu-latest
     steps:
       - name: Remove Trigger Label
@@ -45,6 +46,7 @@ jobs:
 
   AsteriskUnitTestMatrix:
     needs: [ IdentifyBranches ]
+    if: needs.IdentifyBranches.outputs.branch_count > 0
     continue-on-error: false
     strategy:
       fail-fast: false
